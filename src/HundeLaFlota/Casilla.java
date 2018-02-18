@@ -36,8 +36,11 @@ public class Casilla {
         this.y = y;
     }
 
-    public void setTocada(boolean tocada) {
-        this.tocada = tocada;
+    public void setTocada() {
+        if (this.tocada != true) {
+            this.tocada = true;
+            ficha = Ficha.Tocado;
+        }
     }
 
     public void setFicha(Ficha ficha) {

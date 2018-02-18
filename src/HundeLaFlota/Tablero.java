@@ -5,14 +5,14 @@ public class Tablero {
     private static int filas;
     private static int columnas;
 
-    public Tablero(Casilla[][] tablero){
+    public Tablero(Casilla[][] tablero) {
         this.tablero = tablero;
 
         filas = tablero.length;
         columnas = tablero[0].length;
 
-        for (int f = 0; f < filas; f++){
-            for (int c = 0; c < columnas; c++){
+        for (int f = 0; f < filas; f++) {
+            for (int c = 0; c < columnas; c++) {
 
             }
         }
@@ -46,12 +46,19 @@ public class Tablero {
     public String toString() {
         String tableroToString = "";
 
-        for (int f = 0; f < filas; f++){
-            for (int c = 0; c < columnas; c++){
-                tableroToString += tablero[f][c] + " ";
+        for (int f = 0; f < filas; f++) {
+            for (int c = 0; c < columnas; c++) {
+                tableroToString += "\t" + tablero[f][c] + " ";
             }
-            tableroToString += "\n";
+            tableroToString += "\t" + f + " \n";
         }
+
+        for (int c = 0; c < columnas; c++) {
+            tableroToString += "\t" + c + " ";
+        }
+
+        tableroToString += "\n";
+
         return tableroToString;
     }
 }

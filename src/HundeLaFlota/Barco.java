@@ -2,7 +2,7 @@ package HundeLaFlota;
 
 public class Barco {
 
-    private Casilla[] posicion;
+    private Casilla[] casillas;
     private TiposBarco tipo;
     private int longitudBarco;
     private boolean hundido;
@@ -15,8 +15,8 @@ public class Barco {
         }
 
         this.tipo = tipo;
-        this.posicion = posicion;
-        longitudBarco = this.posicion.length;
+        this.casillas = posicion;
+        longitudBarco = this.casillas.length;
         hundido = false;
     }
 
@@ -28,8 +28,8 @@ public class Barco {
         return longitudBarco;
     }
 
-    public Casilla[] getPosicion() {
-        return posicion;
+    public Casilla[] getCasillas() {
+        return casillas;
     }
 
     public boolean isHundido() {
@@ -41,24 +41,22 @@ public class Barco {
     }
 
     public void setPosicion(Casilla[] barco) {
-        this.posicion = barco;
+        this.casillas = barco;
     }
 
     private void setBarcoHundido() {
-        for (Casilla cas : posicion) {
+        for (Casilla cas : casillas) {
             cas.setFicha(Ficha.Hundido);
         }
     }
 
     public boolean compHundido() {
         int cont = 0;
-        for (Casilla posicion : posicion) {
+        for (Casilla posicion : casillas) {
             if (posicion.isTocada()) {
                 cont++;
                 posicion.setFicha(Ficha.BarcoTocado);
-                continue;
             }
-            break;
         }
         hundido = cont == longitudBarco;
         if (hundido) {
