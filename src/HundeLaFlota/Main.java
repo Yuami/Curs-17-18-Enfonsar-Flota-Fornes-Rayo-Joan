@@ -10,9 +10,9 @@ public class Main {
 
         Casilla[] naves = {c1,c2,c3};
 
-        Nave nave = new Nave(naves);
+        Barco barco = new Barco(TiposBarco.CUATRO,naves);
         for (int i = 0; i < naves.length + 1; i++)
-        if (nave.hundido()){
+        if (barco.compHundido()){
             System.out.println("hundido");
         } else {
             naves[i].setTocada(true);

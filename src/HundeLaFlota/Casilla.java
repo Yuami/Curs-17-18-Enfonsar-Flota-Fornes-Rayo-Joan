@@ -4,6 +4,7 @@ public class Casilla {
     private boolean tocada;
     private int x;
     private int y;
+    private Ficha ficha;
 
     public Casilla(int x, int y){
         this.x = x;
@@ -17,6 +18,10 @@ public class Casilla {
 
     public int getY() {
         return y;
+    }
+
+    public Ficha getFicha() {
+        return ficha;
     }
 
     public boolean isTocada() {
@@ -33,5 +38,9 @@ public class Casilla {
 
     public void setTocada(boolean tocada) {
         this.tocada = tocada;
+    }
+
+    public void setFicha(Ficha ficha) {
+        this.ficha = ficha;
     }
 }
