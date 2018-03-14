@@ -1,15 +1,21 @@
 package HundeLaFlota;
 
 public enum TiposBarco {
-    CUATRO(4), TRES(3), DOS(2), UNO(1);
+    CUIRASSATS("CUIRASSATS",4), DESTRUCTOR("DESTRUCTOR", 3), FRAGATES("FRAGATES",2), SUBMARINS("SUBMARINS",1);
 
     private int longitud;
+    private String nombre;
 
-    TiposBarco(int longitud){
+    TiposBarco(String nombre, int longitud){
         this.longitud = longitud;
+        this.nombre = nombre;
     }
 
     public int getLongitud() {
         return longitud;
+    }
+
+    public String getNombre() {
+        return nombre;
     }
 }

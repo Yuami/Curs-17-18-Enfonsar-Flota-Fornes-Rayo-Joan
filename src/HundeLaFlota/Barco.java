@@ -2,21 +2,21 @@ package HundeLaFlota;
 
 public class Barco {
 
-    private Casilla[] casillas;
+    private Casilla[] posicion;
     private TiposBarco tipo;
     private int longitudBarco;
     private boolean hundido;
 
-    Barco(TiposBarco tipo, Casilla[] posicion) {
+    public Barco(TiposBarco tipo, Casilla[] posicion) {
 
         if (tipo.getLongitud() != posicion.length) {
-            System.out.println("Ha habido un error en la creacion del barco faltan casillas para asignar este barco!");
+            System.out.println("Ha habido un error en la creacion del barco faltan posicion para asignar este barco!");
             return;
         }
 
         this.tipo = tipo;
-        this.casillas = posicion;
-        longitudBarco = this.casillas.length;
+        this.posicion = posicion;
+        longitudBarco = this.posicion.length;
         hundido = false;
     }
 
@@ -28,8 +28,8 @@ public class Barco {
         return longitudBarco;
     }
 
-    public Casilla[] getCasillas() {
-        return casillas;
+    public Casilla[] getPosicion() {
+        return posicion;
     }
 
     public boolean isHundido() {
@@ -41,27 +41,38 @@ public class Barco {
     }
 
     public void setPosicion(Casilla[] barco) {
-        this.casillas = barco;
+        this.posicion = barco;
     }
 
     private void setBarcoHundido() {
-        for (Casilla cas : casillas) {
+        for (Casilla cas : posicion) {
             cas.setFicha(Ficha.Hundido);
         }
     }
 
     public boolean compHundido() {
         int cont = 0;
-        for (Casilla posicion : casillas) {
+        for (Casilla posicion : posicion) {
             if (posicion.isTocada()) {
                 cont++;
                 posicion.setFicha(Ficha.BarcoTocado);
             }
         }
+
         hundido = cont == longitudBarco;
+
         if (hundido) {
             setBarcoHundido();
         }
         return hundido;
+    }
+
+    public static boolean compTodosHundidos(Barco[] barcos) {
+        int cont = 0;
+        for (Barco barco : barcos) {
+            if (barco.compHundido())
+                cont++;
+        }
+        return cont == barcos.length - 1;
     }
 }

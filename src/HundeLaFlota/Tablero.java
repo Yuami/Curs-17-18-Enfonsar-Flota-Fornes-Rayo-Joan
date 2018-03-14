@@ -7,15 +7,8 @@ public class Tablero {
 
     public Tablero(Casilla[][] tablero) {
         this.tablero = tablero;
-
         filas = tablero.length;
         columnas = tablero[0].length;
-
-        for (int f = 0; f < filas; f++) {
-            for (int c = 0; c < columnas; c++) {
-
-            }
-        }
     }
 
     public Casilla[][] getTablero() {
@@ -61,4 +54,10 @@ public class Tablero {
 
         return tableroToString;
     }
+
+    public interface Limites {
+        public boolean tablero(int compF, int compC);
+    }
+
+    public static Limites limite = (int compF, int compC) -> (compF < 0 || compC < 0 || compF > filas - 1 || compC > columnas - 1);
 }

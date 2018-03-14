@@ -1,16 +1,16 @@
 package HundeLaFlota;
 
 public enum Ficha {
-    Tocado('X'), Basica('◉'), Barco(''), BarcoTocado('▽'), Hundido('☠');
+    Tocado('X'), Basica('~'), Barco(''), BarcoTocado('▽'), Hundido('☠');
 
 
-    private char fichas;
+    private char ficha;
 
     Ficha(char ficha){
-        this.fichas = fichas;
+        this.ficha = ficha;
     }
 
-    public char getFichas() {
-        return fichas;
+    public char getChar() {
+        return ficha;
     }
 }

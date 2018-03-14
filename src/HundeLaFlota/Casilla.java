@@ -5,11 +5,26 @@ public class Casilla {
     private int x;
     private int y;
     private Ficha ficha;
+    private boolean utilizable;
 
-    public Casilla(int x, int y){
+    public Casilla(int x, int y) {
         this.x = x;
         this.y = y;
         tocada = false;
+        ficha = Ficha.Basica;
+        utilizable = true;
+    }
+
+    public boolean isUtilizable() {
+        return utilizable;
+    }
+
+    public void setUtilizable(boolean utilizable) {
+        this.utilizable = utilizable;
+    }
+
+    public void setTocada(boolean tocada) {
+        this.tocada = tocada;
     }
 
     public int getX() {
@@ -45,5 +60,10 @@ public class Casilla {
 
     public void setFicha(Ficha ficha) {
         this.ficha = ficha;
+    }
+
+    @Override
+    public String toString() {
+        return "" + getFicha().getChar();
     }
 }
