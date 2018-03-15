@@ -48,6 +48,7 @@ public class Juego {
 
         for (int i = 0; i < Juego.jugadors.length; i++) {
             inicializarJugador(filas, columnas, i, numTipoBarcos);
+            fakeClear();
         }
 
         tablero = jugadors[turno].getTablero();
@@ -101,11 +102,20 @@ public class Juego {
 
                     if (jugadors[getTurnoEnemigo()].compTodosHundidos()) break;
                 }
-            } else cambiarTurno();
+            } else {
+                cambiarTurno();
+                fakeClear();
+            }
 
             imprimirNotificacion(cas);
         }
         imprimirTableros(false);
+    }
+
+    private static void fakeClear() {
+        for (int i = 0; i < 50; i++) {
+            System.out.println();
+        }
     }
 
     private static void tocarImposiblesDiagonales(Casilla cas) {
@@ -162,6 +172,10 @@ public class Juego {
         return false;
     }
 
+    private static boolean compCasillaNoDisponible(int f, int c, Tablero tablero) {
+        return Tablero.limite.tablero(f, c) || tablero.getTablero()[f][c].isTocado();
+    }
+
     private static Casilla pedirCasilla(Tablero tablero) {
         Scanner scan = new Scanner(System.in);
         while (true) {
@@ -171,18 +185,12 @@ public class Juego {
             System.out.print("Elige columna: ");
             int c = scan.nextInt();
 
-            if (Tablero.limite.tablero(f, c) || compTocada(tablero.getTablero()[f][c])) {
-                imprimirTableros(true);
-                System.out.println("No puedes usar esa casilla");
+            if (compCasillaNoDisponible(f, c, tablero)) {
                 continue;
             }
 
             return tablero.getTablero()[f][c];
         }
-    }
-
-    private static boolean compTocada(Casilla c) {
-        return c.isTocado();
     }
 
     private static void cambiarTurno() {
@@ -211,9 +219,29 @@ public class Juego {
 
         while (noGustar) {
             Tablero tablero = inicializarTablero(f, c);
-            Barco[] barcos = inicializarBarcosJugador(jugador, numTipoBarcos, tablero);
+
+            Barco[] barcos = inicializarBarcosJugador(jugador, numTipoBarcos, tablero, opcionRandom());
+
             Juego.jugadors[jugador] = new Jugador(barcos, jugador + 1, tablero);
             noGustar = noGustar(tablero);
+        }
+    }
+
+    private static boolean opcionRandom() {
+        while (true) {
+            System.out.println("Quieres crear los barcos aleatoriamente?");
+            System.out.println("1) Sí");
+            System.out.println("2) No");
+            System.out.print("> ");
+            String opcion = new Scanner(System.in).next();
+            switch (opcion) {
+                case "1":
+                    return true;
+                case "2":
+                    return false;
+                default:
+                    System.out.println("No es una opcion valida!");
+            }
         }
     }
 
@@ -235,7 +263,7 @@ public class Juego {
         }
     }
 
-    private static Barco[] inicializarBarcosJugador(int jugador, int[] numTipoBarcos, Tablero tablero) {
+    private static Barco[] inicializarBarcosJugador(int jugador, int[] numTipoBarcos, Tablero tablero, boolean random) {
 
         TiposBarco[] tipos = {TiposBarco.CUIRASSATS, TiposBarco.DESTRUCTOR, TiposBarco.FRAGATES, TiposBarco.SUBMARINS};
 
@@ -249,17 +277,20 @@ public class Juego {
         for (int i = 0; i < numTipoBarcos.length; i++) {
 
             for (int j = 0; j < numTipoBarcos[i]; j++) {
-
-                if (tipos[i] == TiposBarco.SUBMARINS) {
-                    Casilla[] cas = new Casilla[1];
-                    cas[0] = pedirPosicionInicial(jugador, tipos[i], tablero);
-                    cas[0].setBarcoID(cont);
-                    barc = new Barco(tipos[i], cas, cont);
+                if(!random) {
+                    if (tipos[i] == TiposBarco.SUBMARINS) {
+                        Casilla[] cas = new Casilla[1];
+                        cas[0] = pedirPosicionInicial(jugador, tipos[i], tablero);
+                        cas[0].setBarcoID(cont);
+                        barc = new Barco(tipos[i], cas, cont);
+                    } else {
+                        inicial = pedirPosicionInicial(jugador, tipos[i], tablero);
+                        barc = pedirOrientacion(inicial, tipos[i], tablero, cont);
+                    }
                 } else {
-                    inicial = pedirPosicionInicial(jugador, tipos[i], tablero);
-                    barc = pedirOrientacion(inicial, tipos[i], tablero, cont);
+                    inicial = randomPosicionInicial(tipos[i], tablero);
+                    barc = randomOrientacion(inicial, tipos[i], tablero, cont);
                 }
-
                 barcos[cont++] = barc;
             }
         }
@@ -291,6 +322,36 @@ public class Juego {
             }
             if (compDisponible(cas, tiposBarco, tablero))
                 return tablero.getTablero()[f][c];
+        }
+    }
+
+    private static Casilla randomPosicionInicial(TiposBarco tiposBarco, Tablero tablero) {
+        while (true) {
+            int F = Tablero.getFilas();
+            int C = Tablero.getColumnas();
+
+            int f = (int) (Math.random() * F);
+            int c = (int) (Math.random() * C);
+            Casilla cas = tablero.getTablero()[f][c];
+
+            if (!cas.isUtilizable()) {
+                continue;
+            }
+            if (compDisponible(cas, tiposBarco, tablero))
+                return tablero.getTablero()[f][c];
+        }
+    }
+
+    private static Barco randomOrientacion(Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero, int id) {
+        while (true) {
+            int O = orientaciones.length;
+
+            int o = (int) (Math.random() * O);
+
+            Orientacion ori = orientaciones[o];
+            if (!compDisponible(ori, posicionInicial, tiposBarco, tablero)) continue;
+
+            return crearBarco(posicionInicial, tiposBarco, ori, tablero, id);
         }
     }
 
