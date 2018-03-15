@@ -4,21 +4,45 @@ import java.util.Scanner;
 
 public class Juego {
 
+    private static Orientacion[] orientaciones = {
+            Orientacion.ABAJO, Orientacion.ARRIBA,
+            Orientacion.DERECHA, Orientacion.IZQUIERDA
+    };
+
     private static Jugador[] jugadors;
     private static int turno;
     private static Tablero tablero;
     private static Tablero tableroEnemigo;
 
-    public static void iniciarJuego(int numJugadors, int filas, int columnas, int cCuirassats, int cDestructors, int cFragates, int cSubmarins) {
+    public static void iniciarJuego(int numJugadors, int filCol, int cCuirassats, int cDestructors, int cFragates, int cSubmarins) {
         int[] numTipoBarcos = {cCuirassats, cDestructors, cFragates, cSubmarins};
-        iniciarJuego(numJugadors, filas, columnas, numTipoBarcos);
+        iniciarJuego(numJugadors, filCol, numTipoBarcos);
     }
 
-    public static void iniciarJuego(int numJugadors, int filas, int columnas, int[] numTipoBarcos) {
+    public static void iniciarJuego(int numJugadors, int filCol, int[] numTipoBarcos) {
         if (numTipoBarcos.length != 4) {
             System.out.println("Faltan o sobran parametros en el numero de tipos de Barcos");
             return;
         }
+        if (filCol < 10) {
+            filCol = 10;
+            System.out.println("10 filas y columnas asignadas! Es el minimo posible");
+        }
+
+        int sum = numTipoBarcos[0] + numTipoBarcos[1] + numTipoBarcos[2] + numTipoBarcos[3];
+        if (sum > filCol) {
+            System.out.println("No puedes poner mas barcos que filas y columnas (Si hay 10 filas y columnas max. 10 Barcos)");
+            return;
+        }
+
+        int filas = filCol;
+        int columnas = filCol;
+
+        if (numJugadors < 2) {
+            numJugadors = 2;
+            System.out.println("El minim de jugadors son 2");
+        }
+
         turno = 0;
         Juego.jugadors = new Jugador[numJugadors];
 
@@ -71,7 +95,7 @@ public class Juego {
             cas.setTocado();
 
             if (cas.isContieneBarco()) {
-                tocarImposibles(cas);
+                tocarImposiblesDiagonales(cas);
 
                 if (compBarcoHundido(cas)) {
                     tocarImposiblesHundido(cas);
@@ -85,18 +109,17 @@ public class Juego {
         imprimirTableros(seguirPartida);
     }
 
-    public static void tocarImposibles(Casilla cas) {
+    public static void tocarImposiblesDiagonales(Casilla cas) {
         int[][] imposibles = {
                 {-1, -1}, {-1, +1},
                 {+1, -1}, {+1, +1}
         };
 
-        tocarImposibleFin(cas, imposibles);
+        tocarImposibles(cas, imposibles);
     }
 
     public static void tocarImposiblesHundido(Casilla cas) {
         Barco[] barcos = jugadors[getTurnoEnemigo()].getBarcos();
-
 
         int[][] imposibles = {
                 {-1, 0}, {0, -1},
@@ -112,7 +135,7 @@ public class Juego {
                     else
                         posicion = barco.getPosicion()[barco.getPosicion().length - 1];
 
-                        tocarImposibleFin(posicion, imposibles);
+                    tocarImposibles(posicion, imposibles);
                 }
 
                 break;
@@ -120,7 +143,7 @@ public class Juego {
         }
     }
 
-    private static void tocarImposibleFin(Casilla cas, int[][] imposibles){
+    private static void tocarImposibles(Casilla cas, int[][] imposibles) {
         for (int[] imposible : imposibles) {
             int f = cas.getX() + imposible[0];
             int c = cas.getY() + imposible[1];
@@ -167,7 +190,6 @@ public class Juego {
         turno = ++turno % jugadors.length;
         tablero = jugadors[turno].getTablero();
         tableroEnemigo = jugadors[getTurnoEnemigo()].getTablero();
-
     }
 
     public static int getTurnoEnemigo() {
@@ -257,30 +279,50 @@ public class Juego {
             System.out.print("Elige la columna: ");
             int c = scan.nextInt();
 
-            if (!compPosicionInicial(tablero.getTablero()[f][c])) {
-                System.out.println("No puede utilizar esa casilla!");
+            if (Tablero.limite.tablero(f, c)) {
+                System.out.println("Te has salido del tablero!");
                 continue;
             }
 
-            return tablero.getTablero()[f][c];
+            Casilla cas = tablero.getTablero()[f][c];
+
+            if (!cas.isUtilizable()) {
+                System.out.println("No puede utilizar esa casilla!");
+                continue;
+            }
+            if (compDisponible(cas, tiposBarco, tablero))
+                return tablero.getTablero()[f][c];
         }
     }
 
     public static Barco pedirOrientacion(Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero, int id) {
         Scanner scan = new Scanner(System.in);
 
-        Orientacion[] orientaciones = {
-                Orientacion.ABAJO, Orientacion.ARRIBA,
-                Orientacion.DERECHA, Orientacion.IZQUIERDA
-        };
-
         while (true) {
-
             for (int i = 0; i < orientaciones.length; i++) {
                 System.out.println(i + ") " + orientaciones[i].getDireccion());
             }
             System.out.println("Que orientacion quieres poner el barco?");
-            int ori = scan.nextInt();
+            int i = scan.nextInt();
+
+            Orientacion ori = null;
+
+            switch (i) {
+                case 0:
+                    ori = Orientacion.ABAJO;
+                    break;
+                case 1:
+                    ori = Orientacion.ARRIBA;
+                    break;
+                case 2:
+                    ori = Orientacion.DERECHA;
+                    break;
+                case 3:
+                    ori = Orientacion.IZQUIERDA;
+                    break;
+                default:
+                    continue;
+            }
 
             if (!compDisponible(ori, posicionInicial, tiposBarco, tablero)) {
                 System.out.println(tablero);
@@ -293,13 +335,16 @@ public class Juego {
         }
     }
 
-    public static boolean compDisponible(int ori, Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero) {
-        int[][] orientaciones = {
-                {1, 0}, {-1, 0},
-                {0, 1}, {0, -1}, {0, 0}
-        };
+    public static boolean compDisponible(Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero) {
+        for (int i = 0; i < orientaciones.length; i++) {
+            if (compDisponible(orientaciones[i], posicionInicial, tiposBarco, tablero))
+                return true;
+        }
+        return false;
+    }
 
-        int[] orientacion = orientaciones[ori];
+    public static boolean compDisponible(Orientacion ori, Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero) {
+        int[] orientacion = ori.getOrientacion();
 
         int dF = orientacion[0];
         int dC = orientacion[1];
@@ -314,19 +359,10 @@ public class Juego {
         return true;
     }
 
-    public static boolean compPosicionInicial(Casilla c) {
-        return c.isUtilizable();
-    }
-
-    public static Barco crearBarco(Casilla cInicial, TiposBarco tipoBarco, int ori, Tablero tablero, int id) {
+    public static Barco crearBarco(Casilla cInicial, TiposBarco tipoBarco, Orientacion ori, Tablero tablero, int id) {
         Casilla[] tempBarco = new Casilla[tipoBarco.getLongitud()];
 
-        int[][] orientaciones = {
-                {1, 0}, {-1, 0},
-                {0, 1}, {0, -1}, {0, 0}
-        };
-
-        int[] orientacion = orientaciones[ori];
+        int[] orientacion = ori.getOrientacion();
 
         if (tipoBarco.getLongitud() == TiposBarco.SUBMARINS.getLongitud()) {
             tempBarco[0] = cInicial;
