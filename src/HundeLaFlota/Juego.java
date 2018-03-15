@@ -56,7 +56,7 @@ public class Juego {
         empezar();
     }
 
-    public static void imprimirTableros(boolean seguirPartida) {
+    private static void imprimirTableros(boolean seguirPartida) {
         System.out.print("Ficha" + Ficha.Base + ": " + Ficha.Base.getChar() + " ");
         System.out.println("Ficha" + Ficha.Barco + ": " + Ficha.Barco.getChar() + " ");
 
@@ -80,16 +80,15 @@ public class Juego {
 
     }
 
-    public static void imprimirNotificacion(Casilla cas) {
+    private static void imprimirNotificacion(Casilla cas) {
         System.out.println("----");
         System.out.println(cas.getFicha());
         System.out.println("----");
     }
 
-    public static void empezar() {
-        boolean seguirPartida = true;
-        while (seguirPartida) {
-            imprimirTableros(seguirPartida);
+    private static void empezar() {
+        while (true) {
+            imprimirTableros(true);
             Casilla cas = pedirCasilla(tableroEnemigo);
 
             cas.setTocado();
@@ -100,16 +99,16 @@ public class Juego {
                 if (compBarcoHundido(cas)) {
                     tocarImposiblesHundido(cas);
 
-                    if (jugadors[getTurnoEnemigo()].compTodosHundidos()) seguirPartida = false;
+                    if (jugadors[getTurnoEnemigo()].compTodosHundidos()) break;
                 }
             } else cambiarTurno();
 
             imprimirNotificacion(cas);
         }
-        imprimirTableros(seguirPartida);
+        imprimirTableros(false);
     }
 
-    public static void tocarImposiblesDiagonales(Casilla cas) {
+    private static void tocarImposiblesDiagonales(Casilla cas) {
         int[][] imposibles = {
                 {-1, -1}, {-1, +1},
                 {+1, -1}, {+1, +1}
@@ -118,7 +117,7 @@ public class Juego {
         tocarImposibles(cas, imposibles);
     }
 
-    public static void tocarImposiblesHundido(Casilla cas) {
+    private static void tocarImposiblesHundido(Casilla cas) {
         Barco[] barcos = jugadors[getTurnoEnemigo()].getBarcos();
 
         int[][] imposibles = {
@@ -153,7 +152,7 @@ public class Juego {
         }
     }
 
-    public static boolean compBarcoHundido(Casilla cas) {
+    private static boolean compBarcoHundido(Casilla cas) {
         Barco[] barcos = jugadors[getTurnoEnemigo()].getBarcos();
         for (Barco barco : barcos) {
             if (barco.getId() == cas.getBarcoID()) {
@@ -163,7 +162,7 @@ public class Juego {
         return false;
     }
 
-    public static Casilla pedirCasilla(Tablero tablero) {
+    private static Casilla pedirCasilla(Tablero tablero) {
         Scanner scan = new Scanner(System.in);
         while (true) {
             System.out.println("Turno para el/la JUGADOR/A " + (turno + 1));
@@ -182,21 +181,21 @@ public class Juego {
         }
     }
 
-    public static boolean compTocada(Casilla c) {
+    private static boolean compTocada(Casilla c) {
         return c.isTocado();
     }
 
-    public static void cambiarTurno() {
+    private static void cambiarTurno() {
         turno = ++turno % jugadors.length;
         tablero = jugadors[turno].getTablero();
         tableroEnemigo = jugadors[getTurnoEnemigo()].getTablero();
     }
 
-    public static int getTurnoEnemigo() {
+    private static int getTurnoEnemigo() {
         return (turno + 1) % jugadors.length;
     }
 
-    public static Tablero inicializarTablero(int filas, int columnas) {
+    private static Tablero inicializarTablero(int filas, int columnas) {
         Casilla[][] tableroDeCasillas = new Casilla[filas][columnas];
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
@@ -207,7 +206,7 @@ public class Juego {
         return new Tablero(tableroDeCasillas);
     }
 
-    public static void inicializarJugador(int f, int c, int jugador, int[] numTipoBarcos) {
+    private static void inicializarJugador(int f, int c, int jugador, int[] numTipoBarcos) {
         boolean noGustar = true;
 
         while (noGustar) {
@@ -218,7 +217,7 @@ public class Juego {
         }
     }
 
-    public static boolean noGustar(Tablero tablero) {
+    private static boolean noGustar(Tablero tablero) {
         while (true) {
             Scanner scan = new Scanner(System.in);
             System.out.println(tablero);
@@ -236,7 +235,7 @@ public class Juego {
         }
     }
 
-    public static Barco[] inicializarBarcosJugador(int jugador, int[] numTipoBarcos, Tablero tablero) {
+    private static Barco[] inicializarBarcosJugador(int jugador, int[] numTipoBarcos, Tablero tablero) {
 
         TiposBarco[] tipos = {TiposBarco.CUIRASSATS, TiposBarco.DESTRUCTOR, TiposBarco.FRAGATES, TiposBarco.SUBMARINS};
 
@@ -267,7 +266,7 @@ public class Juego {
         return barcos;
     }
 
-    public static Casilla pedirPosicionInicial(int jugador, TiposBarco tiposBarco, Tablero tablero) {
+    private static Casilla pedirPosicionInicial(int jugador, TiposBarco tiposBarco, Tablero tablero) {
         Scanner scan = new Scanner(System.in);
         while (true) {
             System.out.println("JUGADOR/A " + (jugador + 1));
@@ -295,7 +294,7 @@ public class Juego {
         }
     }
 
-    public static Barco pedirOrientacion(Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero, int id) {
+    private static Barco pedirOrientacion(Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero, int id) {
         Scanner scan = new Scanner(System.in);
 
         while (true) {
@@ -305,7 +304,7 @@ public class Juego {
             System.out.println("Que orientacion quieres poner el barco?");
             int i = scan.nextInt();
 
-            Orientacion ori = null;
+            Orientacion ori;
 
             switch (i) {
                 case 0:
@@ -335,15 +334,15 @@ public class Juego {
         }
     }
 
-    public static boolean compDisponible(Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero) {
-        for (int i = 0; i < orientaciones.length; i++) {
-            if (compDisponible(orientaciones[i], posicionInicial, tiposBarco, tablero))
+    private static boolean compDisponible(Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero) {
+        for (Orientacion orientacione : orientaciones) {
+            if (compDisponible(orientacione, posicionInicial, tiposBarco, tablero))
                 return true;
         }
         return false;
     }
 
-    public static boolean compDisponible(Orientacion ori, Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero) {
+    private static boolean compDisponible(Orientacion ori, Casilla posicionInicial, TiposBarco tiposBarco, Tablero tablero) {
         int[] orientacion = ori.getOrientacion();
 
         int dF = orientacion[0];
@@ -359,7 +358,7 @@ public class Juego {
         return true;
     }
 
-    public static Barco crearBarco(Casilla cInicial, TiposBarco tipoBarco, Orientacion ori, Tablero tablero, int id) {
+    private static Barco crearBarco(Casilla cInicial, TiposBarco tipoBarco, Orientacion ori, Tablero tablero, int id) {
         Casilla[] tempBarco = new Casilla[tipoBarco.getLongitud()];
 
         int[] orientacion = ori.getOrientacion();
@@ -385,7 +384,7 @@ public class Juego {
         return barco;
     }
 
-    public static void setNoUtilizable(Barco barco, Tablero tablero) {
+    private static void setNoUtilizable(Barco barco, Tablero tablero) {
         Casilla[][] tableroCasillas = tablero.getTablero();
         Casilla[] posicion = barco.getPosicion();
 
