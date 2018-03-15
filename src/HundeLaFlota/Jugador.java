@@ -6,7 +6,7 @@ public class Jugador {
     private Barco[] barcos;
     private int id;
 
-    public Jugador(Barco[] barcos, int id, Tablero tablero){
+    public Jugador(Barco[] barcos, int id, Tablero tablero) {
         this.tablero = tablero;
         this.barcos = barcos;
         this.id = id;
@@ -28,8 +28,18 @@ public class Jugador {
         this.barcos = barcos;
     }
 
-    public boolean compTodosHundidos(){
-        return Barco.compTodosHundidos(barcos);
+    public boolean compTodosHundidos() {
+        for (int i = 0; i < barcos.length; i++)
+            if (!barcos[i].compHundido()) return false;
+
+        return true;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 }

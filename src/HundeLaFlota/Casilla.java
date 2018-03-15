@@ -1,18 +1,39 @@
 package HundeLaFlota;
 
 public class Casilla {
-    private boolean tocada;
     private int x;
     private int y;
     private Ficha ficha;
     private boolean utilizable;
 
+    private boolean tocado;
+    private boolean contieneBarco;
+    private int barcoID;
+
     public Casilla(int x, int y) {
         this.x = x;
         this.y = y;
-        tocada = false;
-        ficha = Ficha.Basica;
+        ficha = Ficha.Base;
+
+        contieneBarco = false;
+        tocado = false;
         utilizable = true;
+    }
+
+    public boolean isContieneBarco() {
+        return contieneBarco;
+    }
+
+    public void setContieneBarco(boolean contieneBarco) {
+        this.contieneBarco = contieneBarco;
+    }
+
+    public int getBarcoID() {
+        return barcoID;
+    }
+
+    public void setBarcoID(int barcoID) {
+        this.barcoID = barcoID;
     }
 
     public boolean isUtilizable() {
@@ -23,8 +44,15 @@ public class Casilla {
         this.utilizable = utilizable;
     }
 
-    public void setTocada(boolean tocada) {
-        this.tocada = tocada;
+    public void setTocado() {
+        if (tocado != true) {
+            tocado = true;
+            if (contieneBarco) {
+                ficha = Ficha.Tocado;
+            } else {
+                ficha = Ficha.Agua;
+            }
+        }
     }
 
     public int getX() {
@@ -39,8 +67,8 @@ public class Casilla {
         return ficha;
     }
 
-    public boolean isTocada() {
-        return tocada;
+    public boolean isTocado() {
+        return tocado;
     }
 
     public void setX(int x) {
@@ -51,19 +79,12 @@ public class Casilla {
         this.y = y;
     }
 
-    public void setTocada() {
-        if (this.tocada != true) {
-            this.tocada = true;
-            ficha = Ficha.Tocado;
-        }
-    }
-
     public void setFicha(Ficha ficha) {
         this.ficha = ficha;
     }
 
     @Override
     public String toString() {
-        return "" + getFicha().getChar();
+        return "" + ficha.getChar();
     }
 }

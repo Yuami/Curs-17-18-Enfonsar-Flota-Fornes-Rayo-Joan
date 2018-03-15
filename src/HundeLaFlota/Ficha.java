@@ -1,7 +1,7 @@
 package HundeLaFlota;
 
 public enum Ficha {
-    Tocado('X'), Basica('~'), Barco(''), BarcoTocado('▽'), Hundido('☠');
+    Agua('X'), Base('~'), Barco(''), Tocado('▽'), Hundido('☠');
 
 
     private char ficha;

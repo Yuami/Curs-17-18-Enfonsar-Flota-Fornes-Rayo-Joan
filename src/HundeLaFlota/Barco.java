@@ -6,18 +6,32 @@ public class Barco {
     private TiposBarco tipo;
     private int longitudBarco;
     private boolean hundido;
+    private int id;
 
-    public Barco(TiposBarco tipo, Casilla[] posicion) {
+    public Barco(TiposBarco tipo, Casilla[] posicion, int id) {
 
         if (tipo.getLongitud() != posicion.length) {
             System.out.println("Ha habido un error en la creacion del barco faltan posicion para asignar este barco!");
             return;
         }
 
+        for (int i = 0; i< posicion.length; i++){
+            posicion[i].setFicha(Ficha.Barco);
+            posicion[i].setContieneBarco(true);
+        }
+        this.id = id;
         this.tipo = tipo;
         this.posicion = posicion;
         longitudBarco = this.posicion.length;
         hundido = false;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public TiposBarco getTipo() {
@@ -36,10 +50,6 @@ public class Barco {
         return hundido;
     }
 
-    public void setHundido(boolean hundido) {
-        this.hundido = hundido;
-    }
-
     public void setPosicion(Casilla[] barco) {
         this.posicion = barco;
     }
@@ -52,10 +62,10 @@ public class Barco {
 
     public boolean compHundido() {
         int cont = 0;
-        for (Casilla posicion : posicion) {
-            if (posicion.isTocada()) {
+        for (Casilla posicio : posicion) {
+            if (posicio.isTocado()) {
                 cont++;
-                posicion.setFicha(Ficha.BarcoTocado);
+                posicio.setFicha(Ficha.Tocado);
             }
         }
 
@@ -65,14 +75,5 @@ public class Barco {
             setBarcoHundido();
         }
         return hundido;
-    }
-
-    public static boolean compTodosHundidos(Barco[] barcos) {
-        int cont = 0;
-        for (Barco barco : barcos) {
-            if (barco.compHundido())
-                cont++;
-        }
-        return cont == barcos.length - 1;
     }
 }

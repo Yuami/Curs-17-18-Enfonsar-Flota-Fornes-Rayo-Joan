@@ -35,6 +35,29 @@ public class Tablero {
         Tablero.columnas = columnas;
     }
 
+    public String tableroEscondido(){
+        String tableroToString = "";
+
+        for (int f = 0; f < filas; f++) {
+            for (int c = 0; c < columnas; c++) {
+                if (!tablero[f][c].isTocado()){
+                    tableroToString += "\t" + Ficha.Base.getChar() + " ";
+                }else {
+                    tableroToString += "\t" + tablero[f][c] + " ";
+                }
+            }
+            tableroToString += "\t" + f + " \n";
+        }
+
+        for (int c = 0; c < columnas; c++) {
+            tableroToString += "\t" + c + " ";
+        }
+
+        tableroToString += "\n";
+
+        return tableroToString;
+    }
+
     @Override
     public String toString() {
         String tableroToString = "";
