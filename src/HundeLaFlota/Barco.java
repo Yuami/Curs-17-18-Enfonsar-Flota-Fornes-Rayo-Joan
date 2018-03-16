@@ -26,6 +26,19 @@ public class Barco {
         hundido = false;
     }
 
+    public Barco(TiposBarco tipo, Casilla posicion, int id){
+        posicion.setFicha(Ficha.Barco);
+        posicion.setContieneBarco(true);
+
+        Casilla[] cas = new Casilla[1];
+        cas[0] = posicion;
+        this.id = id;
+        this.tipo = tipo;
+        this.posicion = cas;
+        longitudBarco = this.posicion.length;
+        hundido = false;
+    }
+
     public int getId() {
         return id;
     }
@@ -68,12 +81,11 @@ public class Barco {
                 posicio.setFicha(Ficha.Tocado);
             }
         }
-
-        hundido = cont == longitudBarco;
-
-        if (hundido) {
+        if (cont == longitudBarco){
+            hundido = true;
             setBarcoHundido();
         }
+
         return hundido;
     }
 }
